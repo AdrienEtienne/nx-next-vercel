@@ -1,0 +1,15 @@
+{
+  "name": "@nx-nextjs-vercel/my-new-app",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "my-new-app",
+    "projectType": "application",
+    "sourceRoot": "apps/my-new-app"
+  },
+  "dependencies": {
+    "next": "14.2.16",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
