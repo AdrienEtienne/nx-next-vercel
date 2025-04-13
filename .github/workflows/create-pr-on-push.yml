@@ -12,12 +12,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+        with:
+          fetch-depth: 0
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'Automated Pull Request'
           body: 'This pull request is created automatically when a commit is pushed to a branch.'
           base: main
           head: ${{ github.ref }}
