@@ -1,0 +1,26 @@
+# Create a pull request when a commit is pushed to any branch except main
+# This workflow is triggered on push events to any branch except main
+# It creates a pull request to the main branch with the changes from the pushed branch
+name: Create Pull Request on Push
+on:
+  push:
+    branches-ignore:
+      - main
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Automated Pull Request'
+          body: 'This pull request is created automatically when a commit is pushed to a branch.'
+          base: main
+          head: ${{ github.ref }}
+          draft: true
+          commit-message: 'Automated commit message'
+          labels: 'automated'
