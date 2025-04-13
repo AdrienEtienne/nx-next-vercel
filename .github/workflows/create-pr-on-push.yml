@@ -20,3 +20,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: 'This pull request is created automatically when a commit is pushed to a branch.'
           draft: true
+          branch: ${{ github.ref }}
+          base: main
