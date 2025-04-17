@@ -38,6 +38,5 @@ jobs:
           gh issue comment ${{ github.event.issue.number }} --body "Non-regression tests passed. Merging PR #${{ steps.find_pr.outputs.pr_number }}."
           gh pr merge ${{ steps.find_pr.outputs.pr_number }} \
             --repo ${{ github.repository }} \
-            --merge \
             --squash \
             --delete-branch
