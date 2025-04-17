@@ -1,0 +1,39 @@
+# Create a pull request when a commit is pushed to any branch except main
+# This workflow is triggered on push events to any branch except main
+# It creates a pull request to the main branch with the changes from the pushed branch
+name: Create pull request on branch created
+on:
+  push:
+    types: [created]
+    branches-ignore:
+      - main
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Extract issue number and branch info
+        id: extract
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}" # ex: 123-fix-login-bug
+          echo "Branch name: $BRANCH_NAME"
+          ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '^[0-9]+')
+          echo "Extracted issue number: $ISSUE_NUMBER"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.PAT }}
+          title: 'PR for #${{ steps.extract.outputs.issue_number }} - ${{ steps.extract.outputs.branch_name }}'
+          body: "Closes #${{ steps.extract.outputs.issue_number }}\n\nThis pull request was auto-created."
+          draft: true
+          branch: ${{ steps.extract.outputs.branch_name }}
+          base: main
+          delete-branch: false # en général on ne delete pas tout de suite
