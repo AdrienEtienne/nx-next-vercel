@@ -1,6 +1,6 @@
 import './global.css';
 
-console.log('layout.tsx loaded');
+console.log('layout.tsx loaded 2');
 
 export const metadata = {
   title: 'Welcome to my-new-app',

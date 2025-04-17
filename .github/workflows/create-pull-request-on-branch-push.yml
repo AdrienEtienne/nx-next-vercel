@@ -36,9 +36,10 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         if: steps.check_pr.outputs.exists == '0'
         with:
+          token: ${{ secrets.PAT }}
+          branch: ${{ github.ref }}
+          base: main
           title: 'PR for #${{ steps.extract.outputs.issue_number }} - ${{ steps.extract.outputs.branch_name }}'
           body: "Closes #${{ steps.extract.outputs.issue_number }}\n\nThis pull request was auto-created."
           draft: true
-          branch: ${{ steps.extract.outputs.branch_name }}
-          base: main
           delete-branch: false # en général on ne delete pas tout de suite
