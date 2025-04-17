@@ -30,7 +30,7 @@ jobs:
             echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
           fi
       - name: Add label to linked issue
-        run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "qa" --remove-label "ready-for-review""
+        run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "qa" --remove-label "ready-for-review"
   deploy:
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved'
