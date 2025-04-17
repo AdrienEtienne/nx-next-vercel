@@ -3,13 +3,8 @@
 name: Add Label to Issue on PR Opened
 on:
   pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
-    branches:
-      - main
+    types: [ready_for_review]
+
 permissions:
   issues: write
 
@@ -17,14 +12,23 @@ jobs:
   add-label:
     runs-on: ubuntu-latest
     steps:
-      - name: Add Label to Issue
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const issue_number = context.payload.pull_request.number;
-            const label = 'to review';
-            await github.issues.addLabels({
-              ...context.repo,
-              issue_number,
-              labels: [label],
-            });
+      - name: Find linked issue
+        id: find-issue
+        run: |
+          # Recherche une référence de type #123 dans le body de la PR
+          ISSUE_NUMBER=$(echo "${{ github.event.pull_request.body }}" | grep -oE '#[0-9]+' | head -n1 | tr -d '#')
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "No linked issue found."
+            echo "issue_number=" >> $GITHUB_OUTPUT
+          else
+            echo "Found issue: $ISSUE_NUMBER"
+            echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          fi
+      - name: Add label to linked issue
+        if: steps.find-issue.outputs.issue_number != ''
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ steps.find-issue.outputs.issue_number }}/labels \
+            -d '{"labels": ["ready-for-review"]}'
