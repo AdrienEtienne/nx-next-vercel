@@ -15,6 +15,7 @@ jobs:
   add-label:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Find linked issue
         id: extract
         run: |
