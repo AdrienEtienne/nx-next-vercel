@@ -24,7 +24,6 @@ jobs:
           ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '^[0-9]+')
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          env
       - name: Check if PR already exists
         id: check_pr
         run: |
@@ -37,7 +36,6 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         if: steps.check_pr.outputs.exists == '0'
         with:
-          token: ${{ secrets.PAT }}
           title: 'PR for #${{ steps.extract.outputs.issue_number }} - ${{ steps.extract.outputs.branch_name }}'
           body: "Closes #${{ steps.extract.outputs.issue_number }}\n\nThis pull request was auto-created."
           draft: true
