@@ -1,0 +1,20 @@
+# Deploy when the PR is approved
+name: Deploy on PR Approved
+on:
+  pull_request_review:
+    types: [submitted]
+    branches-ignore:
+      - main
+jobs:
+  deploy:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production..."
+          # Add your deployment commands here

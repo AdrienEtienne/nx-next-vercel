@@ -1,0 +1,26 @@
+# This workflow is triggered when a pull request is opened and not in draft mode
+# It adds a label "to review" to the issue associated with the pull request
+name: Add Label to Issue on PR Opened
+on:
+  pull_request:
+    types: [opened]
+    branches:
+      - main
+permissions:
+  issues: write
+
+jobs:
+  add-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add Label to Issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue_number = context.payload.pull_request.number;
+            const label = 'to review';
+            await github.issues.addLabels({
+              ...context.repo,
+              issue_number,
+              labels: [label],
+            });
