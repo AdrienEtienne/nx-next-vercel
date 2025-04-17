@@ -16,7 +16,7 @@ env:
 jobs:
   deploy-and-comment:
     runs-on: ubuntu-latest
-    deployment: production
+    environment: production
     steps:
       - uses: actions/checkout@v4
       - name: Get merged PR info
