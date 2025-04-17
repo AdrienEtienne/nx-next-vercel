@@ -27,10 +27,11 @@ jobs:
       - name: Check if PR already exists
         id: check_pr
         run: |
-          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
           PR_EXISTS=$(gh pr list --head "${{ steps.extract.outputs.branch_name }}" --json number --jq 'length')
           echo "Found $PR_EXISTS PR(s) for this branch"
           echo "exists=$PR_EXISTS" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         if: steps.check_pr.outputs.exists == '0'
