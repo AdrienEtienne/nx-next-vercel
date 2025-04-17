@@ -24,6 +24,7 @@ jobs:
           ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '^[0-9]+')
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          env
       - name: Check if PR already exists
         id: check_pr
         run: |
