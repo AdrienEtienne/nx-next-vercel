@@ -34,6 +34,7 @@ jobs:
           echo "pr_number=$PRS" >> $GITHUB_OUTPUT
       - name: Merge the associated PR
         run: |
+          gh issue edit ${{ github.event.issue.number }} --remove-label "qa"
           gh issue comment ${{ github.event.issue.number }} --body "This issue is ready for production. Non-regression tests running..."
           gh issue comment ${{ github.event.issue.number }} --body "Non-regression tests passed. Merging PR #${{ steps.find_pr.outputs.pr_number }}."
           gh pr merge ${{ steps.find_pr.outputs.pr_number }} \

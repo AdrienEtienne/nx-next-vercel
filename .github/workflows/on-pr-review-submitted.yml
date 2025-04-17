@@ -29,9 +29,10 @@ jobs:
             echo "Found issue: $ISSUE_NUMBER"
             echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
           fi
-      - name: Add label to linked issue
-        run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "qa" --remove-label "ready-for-review"
-      - run: gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA review. The environment is deployed."
+      - run: |
+          gh issue edit ${{ steps.extract.outputs.issue_number }} --remove-label "ready-for-review"
+          gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "qa"
+          gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA review. The environment is deployed."
   deploy:
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved'
