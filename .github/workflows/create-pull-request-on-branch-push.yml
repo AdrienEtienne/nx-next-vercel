@@ -1,10 +1,9 @@
 # Create a pull request when a commit is pushed to any branch except main
 # This workflow is triggered on push events to any branch except main
 # It creates a pull request to the main branch with the changes from the pushed branch
-name: Create pull request on branch created
+name: Create pull request on branch push
 on:
   push:
-    types: [created]
     branches-ignore:
       - main
 permissions:
@@ -18,17 +17,25 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Extract issue number and branch info
+      - name: Set up GitHub CLI
+        uses: cli/cli-action@v2
+      - name: Extract branch and issue info
         id: extract
         run: |
-          BRANCH_NAME="${GITHUB_REF##*/}" # ex: 123-fix-login-bug
-          echo "Branch name: $BRANCH_NAME"
+          BRANCH_NAME="${GITHUB_REF##*/}"
           ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '^[0-9]+')
-          echo "Extracted issue number: $ISSUE_NUMBER"
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+      - name: Check if PR already exists
+        id: check_pr
+        run: |
+          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+          PR_EXISTS=$(gh pr list --head "${{ steps.extract.outputs.branch_name }}" --json number --jq 'length')
+          echo "Found $PR_EXISTS PR(s) for this branch"
+          echo "exists=$PR_EXISTS" >> $GITHUB_OUTPUT
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
+        if: steps.check_pr.outputs.exists == '0'
         with:
           token: ${{ secrets.PAT }}
           title: 'PR for #${{ steps.extract.outputs.issue_number }} - ${{ steps.extract.outputs.branch_name }}'
