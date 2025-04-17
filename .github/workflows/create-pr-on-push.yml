@@ -4,6 +4,7 @@
 name: Create Pull Request on Push
 on:
   push:
+    types: [created]
     branches-ignore:
       - main
 permissions:
