@@ -37,12 +37,12 @@ jobs:
 
       - name: Simulate production deploy
         run: |
-          echo "🚀 Simulating deployment for PR #${{ steps.pr.outputs.pr_number }}..."
+          echo "🚀 Simulating deployment for Issue #${{ steps.extract.outputs.issue_number }}..."
           sleep 2
           echo "✅ Deployed!"
 
       - name: Comment on linked issue
-        if: steps.pr.outputs.issue_number != ''
+        if: steps.extract.outputs.issue_number != ''
         run: |
           gh issue comment ${{ steps.extract.outputs.issue_number }} \
-            --body "✅ This has been deployed to production via PR #${{ steps.pr.outputs.pr_number }}."
+            --body "✅ This has been deployed to production."
