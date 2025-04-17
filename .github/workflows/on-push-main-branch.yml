@@ -19,30 +19,21 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v4
-      - name: Get merged PR info
-        id: pr
+      - name: Extract issue number from commit message
+        id: extract
         run: |
-          # Find the PR related to this push (latest commit on main)
-          COMMIT_SHA="${{ github.sha }}"
-          echo "Looking for PR that merged $COMMIT_SHA"
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Latest commit message: $COMMIT_MESSAGE"
 
-          PR_JSON=$(gh pr list --state merged --search "$COMMIT_SHA in:body" --json number,title,body --jq '.[0]')
-          PR_NUMBER=$(echo "$PR_JSON" | jq -r '.number')
-          PR_BODY=$(echo "$PR_JSON" | jq -r '.body')
-
-          echo "PR #$PR_NUMBER was merged"
-
-          # Extract issue number (e.g. "Closes #123")
-          ISSUE_NUMBER=$(echo "$PR_BODY" | grep -oE '(Closes|Fixes|Resolves) #?[0-9]+' | grep -oE '[0-9]+')
+          ISSUE_NUMBER=$(echo "$COMMIT_MESSAGE" | grep -oE '#[0-9]+' | grep -oE '[0-9]+')
 
           if [ -z "$ISSUE_NUMBER" ]; then
-            echo "❌ No issue reference found."
+            echo "❌ No issue number found in commit message."
             exit 0
           fi
 
-          echo "Linked issue: #$ISSUE_NUMBER"
+          echo "Found issue: #$ISSUE_NUMBER"
           echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Simulate production deploy
         run: |
@@ -53,5 +44,5 @@ jobs:
       - name: Comment on linked issue
         if: steps.pr.outputs.issue_number != ''
         run: |
-          gh issue comment ${{ steps.pr.outputs.issue_number }} \
+          gh issue comment ${{ steps.extract.outputs.issue_number }} \
             --body "✅ This has been deployed to production via PR #${{ steps.pr.outputs.pr_number }}."
