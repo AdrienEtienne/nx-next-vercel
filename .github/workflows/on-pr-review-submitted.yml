@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved'
     steps:
+      - uses: actions/checkout@v4
       - name: Find linked issue
         id: extract
         run: |
