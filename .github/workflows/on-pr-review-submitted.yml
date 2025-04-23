@@ -45,4 +45,4 @@ jobs:
         with:
           pr_title: ${{ github.event.pull_request.title }}
       - run: echo "Deploying to staging environment..."
-      - run: gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA review. The environment is deployed."
+      - run: gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA. The environment is deployed."
