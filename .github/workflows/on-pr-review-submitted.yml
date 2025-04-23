@@ -30,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved'
     environment: staging
+    permissions:
+      issues: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
