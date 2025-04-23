@@ -1,10 +1,9 @@
 name: Merge PR when Issue is Ready for Production
 
 on:
-  workflow_dispatch:
-#   issues:
-#     types:
-#       - labeled
+  issues:
+    types:
+      - labeled
 
 permissions:
   contents: write
@@ -16,7 +15,7 @@ env:
 
 jobs:
   merge-associated-pr:
-    if: github.event.label.name == 'ready-for-production'
+    if: github.event.label.name == 'qa approved'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
