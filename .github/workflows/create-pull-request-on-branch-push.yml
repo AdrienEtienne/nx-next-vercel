@@ -27,12 +27,12 @@ jobs:
         id: extract
         uses: ./.github/actions/extract-issue-from-branch
         with:
-          branch: env.GITHUB_REF_NAME
+          branch: ${{ env.GITHUB_REF_NAME }}
       - name: Check if PR exists
         id: check_pr
         uses: ./.github/actions/check-pr-exists-from-branch
         with:
-          branch: env.GITHUB_REF_NAME
+          branch: ${{ env.GITHUB_REF_NAME }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         if: steps.check_pr.outputs.exists == '0'
