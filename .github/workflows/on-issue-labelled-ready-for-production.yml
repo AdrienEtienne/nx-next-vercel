@@ -45,7 +45,8 @@ jobs:
               "fieldId": "PVTSSF_lAHOAC2He84A3YmWzgsh-Mo"
             }
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_2 }}
       # - name: Find PR that references the issue
       #   id: find_pr
       #   run: |
