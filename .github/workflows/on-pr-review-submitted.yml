@@ -22,7 +22,8 @@ jobs:
         uses: ./.github/actions/extract-issue-from-pr-title
         with:
           pr_title: ${{ github.event.pull_request.title }}
-      - run: |
+      - name: Update issue labels
+        run: |
           gh issue edit ${{ steps.extract.outputs.issue_number }} --remove-label "ready for review"
           gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ready for qa"
 
@@ -37,10 +38,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Extract issue from branch name
+      - run: env
+      - name: Extract issue number from PR title
         id: extract
-        uses: ./.github/actions/extract-issue-from-branch
+        uses: ./.github/actions/extract-issue-from-pr-title
         with:
-          branch: ${{ github.ref_name }}
+          pr_title: ${{ github.event.pull_request.title }}
       - run: echo "Deploying to staging environment..."
       - run: gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA review. The environment is deployed."
