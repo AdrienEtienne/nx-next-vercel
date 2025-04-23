@@ -1,6 +1,7 @@
 name: Simulate Production Deploy and Comment on Issue
 
-# on:
+on:
+  workflow_dispatch:
 #   push:
 #     branches:
 #       - main

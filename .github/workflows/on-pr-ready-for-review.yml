@@ -1,7 +1,9 @@
 # This workflow is triggered when a pull request is opened and not in draft mode
 # It adds a label "to review" to the issue associated with the pull request
 name: Add Label to Issue on PR Ready for review
-# on:
+
+on:
+  workflow_dispatch:
 #   pull_request:
 #     types: [ready_for_review]
 

@@ -1,6 +1,7 @@
 name: Merge PR when Issue is Ready for Production
 
-# on:
+on:
+  workflow_dispatch:
 #   issues:
 #     types:
 #       - labeled

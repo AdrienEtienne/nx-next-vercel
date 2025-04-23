@@ -26,9 +26,11 @@ jobs:
       - name: Extract issue from branch name
         id: extract
         uses: ./.github/actions/extract-issue-from-branch
+        with:
+          branch: env.GITHUB_REF_NAME
       - name: Check if PR exists
         id: check_pr
-        uses: ./.github/actions/check-pr-exists
+        uses: ./.github/actions/check-pr-exists-from-branch
         with:
           branch: env.GITHUB_REF_NAME
       - name: Create Pull Request
@@ -38,7 +40,7 @@ jobs:
           token: ${{ secrets.PAT }}
           branch: ${{ github.ref }}
           base: main
-          title: 'Issue #${{ steps.extract.outputs.issue_number }} - ${{ steps.extract.outputs.branch_name }}'
+          title: 'Issue #${{ steps.extract.outputs.issue_number }} - ${{ env.GITHUB_REF_NAME }}'
           body: "Closes #${{ steps.extract.outputs.issue_number }}\n\nThis pull request was auto-created."
           draft: true
           delete-branch: false # en général on ne delete pas tout de suite
