@@ -24,7 +24,7 @@ jobs:
         with:
           query: |
             query {
-              organization(login: "AdrienEtienne") {
+              repository(owner: "AdrienEtienne", name: "nx-next-vercel") {
                 projectsV2(first: 10) {
                   nodes {
                     id
