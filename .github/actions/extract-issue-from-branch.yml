@@ -1,0 +1,17 @@
+name: 'Extract Issue Number from Branch'
+description: 'Extracts the branch name and the issue number (if any) from the Git ref.'
+inputs: {}
+outputs:
+  branch_name:
+    description: 'The extracted branch name'
+  issue_number:
+    description: 'The extracted issue number from the branch name'
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        BRANCH_NAME="${GITHUB_REF##*/}"
+        ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '^[0-9]+')
+        echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+      shell: bash
