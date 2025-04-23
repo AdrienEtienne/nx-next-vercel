@@ -44,3 +44,18 @@ jobs:
           body: "Closes #${{ steps.extract.outputs.issue_number }}\n\nThis pull request was auto-created."
           draft: true
           delete-branch: false # en général on ne delete pas tout de suite
+
+  add-ci-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract issue from branch name
+        id: extract
+        uses: ./.github/actions/extract-issue-from-branch
+        with:
+          branch: ${{ github.ref_name }}
+      - name: Add label to linked issue
+        run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ci-passed"
