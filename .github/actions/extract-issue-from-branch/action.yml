@@ -12,5 +12,10 @@ runs:
   steps:
     - run: |
         ISSUE_NUMBER=$(echo "${{ inputs.branch }}" | grep -oE '^[0-9]+')
+        if [ -z "$ISSUE_NUMBER" ]; then
+          echo "❌ No issue number found in branch name"
+          exit 1
+        fi
+        echo "Found issue: $ISSUE_NUMBER"
         echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
       shell: bash
