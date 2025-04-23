@@ -20,16 +20,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Move issue to 'To do' column if body has a mark 'issue:todo'
-        uses: fojia/action-move-issues-to-column@master
+      - uses: octokit/graphql-action@v2
         with:
-          project: 'Demo'
-          column: 'In Progress'
-          # owner: 'fojia'
-          repo: 'nx-next-vercel'
-          type: 'repo'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # marker: 'issue:todo'
+          query: |
+            query {
+              organization(login: "AdrienEtienne") {
+                projectsV2(first: 10) {
+                  nodes {
+                    id
+                    title
+                  }
+                }
+              }
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Move issue in project
+        uses: octokit/graphql-action@v2
+        with:
+          query: |
+            mutation($projectId: ID!, $issueId: ID!, $fieldId: ID!) {
+              updateProjectV2ItemFieldValue(
+                input: {
+                  projectId: $projectId,
+                  itemId: $issueId,
+                  fieldId: $fieldId,
+                  value: { singleSelectOptionId: "REPLACE_WITH_OPTION_ID" }
+                }
+              ) {
+                projectV2Item {
+                  id
+                }
+              }
+            }
+          variables: |
+            {
+              "projectId": "8",
+              "issueId": "9",
+              "fieldId": "REPLACE_WITH_STATUS_FIELD_ID"
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - name: Find PR that references the issue
       #   id: find_pr
       #   run: |
