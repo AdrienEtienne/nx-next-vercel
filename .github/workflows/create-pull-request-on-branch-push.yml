@@ -35,8 +35,8 @@ jobs:
           branch: ${{ github.ref_name }}
       - name: Debug outputs
         run: |
-          echo "Branch: ${{ steps.extract.outputs.exists }}"
-          echo "Issue: ${{ steps.check_pr.outputs.issue_number }}"
+          echo "Branch: ${{ steps.extract.outputs.issue_number }}"
+          echo "Issue: ${{ steps.check_pr.outputs.exists }}"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         if: steps.check_pr.outputs.exists == '0'

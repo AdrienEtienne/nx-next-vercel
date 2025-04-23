@@ -14,5 +14,5 @@ runs:
     - id: extract
       run: |
         ISSUE_NUMBER=$(echo "${{ inputs.branch }}" | grep -oE '^[0-9]+')
-        echo "issue_number=$(echo $ISSUE_NUMBER)" >> $GITHUB_OUTPUT
+        echo "issue_number=9" >> $GITHUB_OUTPUT
       shell: bash
