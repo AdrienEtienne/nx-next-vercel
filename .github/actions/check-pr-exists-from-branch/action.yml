@@ -7,7 +7,7 @@ inputs:
 outputs:
   exists:
     description: '1 if a PR exists for the branch, 0 otherwise'
-    value: ${{ steps.exists.outputs.issue_number }}
+    value: ${{ steps.extract.outputs.exists }}
 runs:
   using: 'composite'
   steps:
