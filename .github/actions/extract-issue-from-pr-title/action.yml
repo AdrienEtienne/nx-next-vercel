@@ -1,0 +1,24 @@
+name: 'Extract Issue Number from PR Title'
+description: 'Extrait un numéro d’issue (ex: #123) depuis le titre d’une Pull Request'
+inputs:
+  pr_title:
+    description: 'Le titre de la pull request'
+    required: true
+outputs:
+  issue_number:
+    description: 'Le numéro d’issue extrait'
+    value: ${{ steps.extract.outputs.issue_number }}
+runs:
+  using: 'composite'
+  steps:
+    - id: extract
+      shell: bash
+      run: |
+        ISSUE_NUMBER=$(echo "${{ inputs.pr_title }}" | grep -oE '#[0-9]+' | head -n1 | tr -d '#')
+        if [ -z "$ISSUE_NUMBER" ]; then
+          echo "❌ Aucun numéro d’issue trouvé dans le titre"
+          exit 1
+        else
+          echo "✅ Issue trouvée : $ISSUE_NUMBER"
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+        fi
