@@ -20,21 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: octokit/graphql-action@v2.x
-        with:
-          query: |
-            query {
-              repository(owner: "AdrienEtienne", name: "nx-next-vercel") {
-                projectsV2(first: 10) {
-                  nodes {
-                    id
-                    title
-                  }
-                }
-              }
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Move issue in project
         uses: octokit/graphql-action@v2.x
         with:
@@ -45,7 +30,7 @@ jobs:
                   projectId: $projectId,
                   itemId: $issueId,
                   fieldId: $fieldId,
-                  value: { singleSelectOptionId: "REPLACE_WITH_OPTION_ID" }
+                  value: { singleSelectOptionId: "47fc9ee4" }
                 }
               ) {
                 projectV2Item {
@@ -55,9 +40,9 @@ jobs:
             }
           variables: |
             {
-              "projectId": "8",
+              "projectId": "PVT_kwHOAC2He84A3YmW",
               "issueId": "9",
-              "fieldId": "REPLACE_WITH_STATUS_FIELD_ID"
+              "fieldId": "PVTSSF_lAHOAC2He84A3YmWzgsh-Mo"
             }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
