@@ -3,12 +3,8 @@
 name: Add Label when PR is Approved
 
 on:
-  workflow_dispatch:
-#   pull_request_review:
-#     types: [submitted]
-
-permissions:
-  issues: write
+  pull_request_review:
+    types: [submitted]
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -17,30 +13,32 @@ jobs:
   update-labels:
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved'
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
-      - name: Find linked issue
+      - name: Extract issue number from PR title
         id: extract
-        run: |
-          # Recherche une référence de type #123 dans le body de la PR
-          ISSUE_NUMBER=$(echo "${{ github.event.pull_request.body }}" | grep -oE '#[0-9]+' | head -n1 | tr -d '#')
-          if [ -z "$ISSUE_NUMBER" ]; then
-            echo "❌ No issue number found in PR body"
-            exit 1
-          else
-            echo "Found issue: $ISSUE_NUMBER"
-            echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          fi
+        uses: ./.github/actions/extract-issue-from-pr-title
+        with:
+          pr_title: ${{ github.event.pull_request.title }}
       - run: |
-          gh issue edit ${{ steps.extract.outputs.issue_number }} --remove-label "ready-for-review"
-          gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "qa"
-          gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA review. The environment is deployed."
+          gh issue edit ${{ steps.extract.outputs.issue_number }} --remove-label "ready for review"
+          gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ready for qa"
+
   deploy:
     runs-on: ubuntu-latest
     if: github.event.review.state == 'approved'
     environment: staging
     steps:
-      - name: Deploy to staging
-        run: |
-          echo "Deploying to production..."
-          # Add your deployment commands here
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract issue from branch name
+        id: extract
+        uses: ./.github/actions/extract-issue-from-branch
+        with:
+          branch: ${{ github.ref_name }}
+      - run: echo "Deploying to staging environment..."
+      - run: gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA review. The environment is deployed."
