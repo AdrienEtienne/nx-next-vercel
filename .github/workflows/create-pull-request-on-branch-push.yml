@@ -58,4 +58,4 @@ jobs:
         with:
           branch: ${{ github.ref_name }}
       - name: Add label to linked issue
-        run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ci-passed"
+        run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ci passed"
