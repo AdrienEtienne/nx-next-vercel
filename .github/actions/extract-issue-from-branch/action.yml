@@ -7,6 +7,7 @@ inputs:
 outputs:
   issue_number:
     description: 'The extracted issue number from the branch name'
+    value: ${{ steps.extract.outputs.issue_number }}
 runs:
   using: 'composite'
   steps:

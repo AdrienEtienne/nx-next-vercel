@@ -7,10 +7,12 @@ inputs:
 outputs:
   exists:
     description: '1 if a PR exists for the branch, 0 otherwise'
+    value: ${{ steps.exists.outputs.issue_number }}
 runs:
   using: 'composite'
   steps:
-    - run: |
+    - id: extract
+      run: |
         echo "Checking for existing PR on branch: ${{ inputs.branch }}"
         PR_EXISTS=$(gh pr list --head "${{ inputs.branch }}" --json number --jq 'length')
         echo "Found $PR_EXISTS PR(s) for this branch"
