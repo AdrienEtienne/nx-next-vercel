@@ -1,9 +1,9 @@
 name: Merge PR when Issue is Ready for Production
 
-on:
-  issues:
-    types:
-      - labeled
+# on:
+#   issues:
+#     types:
+#       - labeled
 
 permissions:
   contents: write

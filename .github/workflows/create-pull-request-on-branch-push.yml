@@ -2,15 +2,19 @@
 # This workflow is triggered on push events to any branch except main
 # It creates a pull request to the main branch with the changes from the pushed branch
 name: Create pull request on branch push
+
 on:
   push:
     branches-ignore:
       - main
+
 permissions:
   contents: write
   pull-requests: write
+
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
@@ -33,7 +37,7 @@ jobs:
           echo "Found $PR_EXISTS PR(s) for this branch"
           echo "exists=$PR_EXISTS" >> $GITHUB_OUTPUT
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v7
         if: steps.check_pr.outputs.exists == '0'
         with:
           token: ${{ secrets.PAT }}

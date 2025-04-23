@@ -1,9 +1,9 @@
 # This workflow is triggered when a pull request is opened and not in draft mode
 # It adds a label "to review" to the issue associated with the pull request
 name: Add Label when PR is Approved
-on:
-  pull_request_review:
-    types: [submitted]
+# on:
+#   pull_request_review:
+#     types: [submitted]
 
 permissions:
   issues: write
