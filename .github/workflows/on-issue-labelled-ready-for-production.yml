@@ -41,7 +41,7 @@ jobs:
           variables: |
             {
               "projectId": "PVT_kwHOAC2He84A3YmW",
-              "issueId": "9",
+              "issueId": "PVTI_lAHOAC2He84A3YmWzgZpwAQ",
               "fieldId": "PVTSSF_lAHOAC2He84A3YmWzgsh-Mo"
             }
         env:
