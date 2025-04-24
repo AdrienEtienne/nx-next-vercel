@@ -1,0 +1,67 @@
+name: On Issue Labeled
+
+on:
+  issues:
+    types:
+      - labeled
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  merge-associated-pr:
+    if: github.event.label.name == 'in progress'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Déplacer l’item vers In Progress
+        uses: ./.github/actions/move-project-item-status
+        with:
+          token: ${{ secrets.PAT_2 }}
+          project_id: 'PVT_kwHOAC2He84A3YmW' # ID réel du projet
+          item_id: PVTI_lAHOAC2He84A3YmWzgZpwAQ
+          status_field_name: 'Status'
+          target_status: 'In Progress'
+
+  on-issue-qa-approved:
+    if: github.event.label.name == 'qa approved'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh issue edit ${{ github.event.issue.number }} --remove-label "ready for qa"
+      - run: gh issue comment ${{ github.event.issue.number }} --body "The changes are validated. Non-regression tests running..."
+      - run: gh issue edit ${{ github.event.issue.number }} --add-label "non regression passed"
+
+  on-issue-ready-for-production:
+    if: github.event.label.name == 'ready for production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find PR that references the issue
+        id: find_pr
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          echo "Searching PRs referencing issue #$ISSUE_NUMBER..."
+          # Find PRs that mention the issue
+          PRS=$(gh pr list --state open --search "Closes #$ISSUE_NUMBER in:body" --json number,headRefName,mergeable --jq '.[] | select(.mergeable == "MERGEABLE") | .number')
+          if [ -z "$PRS" ]; then
+            echo "❌ No open, mergeable PR found referencing issue #$ISSUE_NUMBER"
+            exit 1
+          fi
+          echo "Found PR #: $PRS"
+          echo "pr_number=$PRS" >> $GITHUB_OUTPUT
+      - name: Merge the associated PR
+        run: |
+          gh issue comment ${{ github.event.issue.number }} --body "This issue is ready for production. On your mark, get set, go! 🚀"
+          gh pr merge ${{ steps.find_pr.outputs.pr_number }} \
+            --repo ${{ github.repository }} \
+            --squash \
+            --delete-branch
+          gh issue comment ${{ github.event.issue.number }} --body "Issue deployed on preproduction successfully."
+          gh issue comment ${{ github.event.issue.number }} --body "Issue deployed on production successfully."
+          gh issue edit ${{ github.event.issue.number }} --remove-label "ready for production"
+          gh issue edit ${{ github.event.issue.number }} --add-label "in production"
