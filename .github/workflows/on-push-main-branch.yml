@@ -1,9 +1,10 @@
 name: Simulate Production Deploy and Comment on Issue
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+#   push:
+#     branches:
+#       - main
 
 permissions:
   issues: write

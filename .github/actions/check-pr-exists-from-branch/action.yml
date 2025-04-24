@@ -1,0 +1,20 @@
+name: 'Check if PR exists'
+description: 'Checks if a pull request already exists for a given branch using the GitHub CLI'
+inputs:
+  branch:
+    description: 'The name of the branch to check'
+    required: true
+outputs:
+  exists:
+    description: '1 if a PR exists for the branch, 0 otherwise'
+    value: ${{ steps.extract.outputs.exists }}
+runs:
+  using: 'composite'
+  steps:
+    - id: extract
+      run: |
+        echo "Checking for existing PR on branch: ${{ inputs.branch }}"
+        PR_EXISTS=$(gh pr list --head "${{ inputs.branch }}" --json number --jq 'length')
+        echo "Found $PR_EXISTS PR(s) for this branch"
+        echo "exists=$PR_EXISTS" >> $GITHUB_OUTPUT
+      shell: bash

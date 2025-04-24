@@ -2,15 +2,19 @@
 # This workflow is triggered on push events to any branch except main
 # It creates a pull request to the main branch with the changes from the pushed branch
 name: Create pull request on branch push
+
 on:
   push:
     branches-ignore:
       - main
+
 permissions:
   contents: write
   pull-requests: write
+
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   create-pull-request:
     runs-on: ubuntu-latest
@@ -19,27 +23,41 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Extract branch and issue info
+      - name: Extract issue from branch name
         id: extract
-        run: |
-          BRANCH_NAME="${GITHUB_REF##*/}"
-          ISSUE_NUMBER=$(echo "$BRANCH_NAME" | grep -oE '^[0-9]+')
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-      - name: Check if PR already exists
+        uses: ./.github/actions/extract-issue-from-branch
+        with:
+          branch: ${{ github.ref_name }}
+      - name: Check if PR exists
         id: check_pr
-        run: |
-          PR_EXISTS=$(gh pr list --head "${{ steps.extract.outputs.branch_name }}" --json number --jq 'length')
-          echo "Found $PR_EXISTS PR(s) for this branch"
-          echo "exists=$PR_EXISTS" >> $GITHUB_OUTPUT
+        uses: ./.github/actions/check-pr-exists-from-branch
+        with:
+          branch: ${{ github.ref_name }}
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v7
         if: steps.check_pr.outputs.exists == '0'
         with:
           token: ${{ secrets.PAT }}
           branch: ${{ github.ref }}
           base: main
-          title: 'PR for #${{ steps.extract.outputs.issue_number }} - ${{ steps.extract.outputs.branch_name }}'
+          title: 'Issue #${{ steps.extract.outputs.issue_number }} - ${{ github.ref_name }}'
           body: "Closes #${{ steps.extract.outputs.issue_number }}\n\nThis pull request was auto-created."
           draft: true
           delete-branch: false # en général on ne delete pas tout de suite
+
+  add-ci-label:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract issue from branch name
+        id: extract
+        uses: ./.github/actions/extract-issue-from-branch
+        with:
+          branch: ${{ github.ref_name }}
+      - name: Add label to linked issue
+        run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ci passed"

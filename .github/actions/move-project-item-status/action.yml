@@ -1,0 +1,32 @@
+name: 'Move Project Item to Status'
+description: 'Met à jour le champ de status d’un item Project V2'
+inputs:
+  token:
+    description: 'GitHub Token avec accès aux projets V2'
+    required: true
+  project_id:
+    description: 'ID du projet'
+    required: true
+  item_id:
+    description: 'ID de l’item à modifier'
+    required: true
+  status_field_name:
+    description: 'Nom du champ de status (ex: Status)'
+    required: true
+  target_status:
+    description: 'Valeur cible (ex: In Progress)'
+    required: true
+outputs:
+  success:
+    description: 'true si le champ a été mis à jour'
+runs:
+  using: 'composite'
+  steps:
+    - run: bash ${GITHUB_ACTION_PATH}/entrypoint.sh
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        PROJECT_ID: ${{ inputs.project_id }}
+        ITEM_ID: ${{ inputs.item_id }}
+        FIELD_NAME: ${{ inputs.status_field_name }}
+        TARGET_OPTION: ${{ inputs.target_status }}
