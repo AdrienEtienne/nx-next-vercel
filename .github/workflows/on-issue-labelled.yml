@@ -23,7 +23,7 @@ jobs:
       - name: Déplacer l’item vers In Progress
         uses: ./.github/actions/move-project-item-status
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.PAT_2 }}
           project_id: 'PVT_kwHOAC2He84A3YmW' # ID réel du projet
           item_id: PVTI_lAHOAC2He84A3YmWzgZpwAQ
           status_field_name: 'Status'

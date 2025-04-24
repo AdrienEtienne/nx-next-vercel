@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-echo $GH_TOKEN | gh auth login --with-token
+# echo $GH_TOKEN | gh auth login --with-token
 
 echo "🔍 Recherche des champs du projet..."
 FIELDS=$(gh api graphql -f query="
