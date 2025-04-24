@@ -61,7 +61,3 @@ jobs:
             --repo ${{ github.repository }} \
             --squash \
             --delete-branch
-          gh issue comment ${{ github.event.issue.number }} --body "Issue deployed on preproduction successfully."
-          gh issue comment ${{ github.event.issue.number }} --body "Issue deployed on production successfully."
-          gh issue edit ${{ github.event.issue.number }} --remove-label "ready for production"
-          gh issue edit ${{ github.event.issue.number }} --add-label "in production"
