@@ -1,10 +1,9 @@
 name: Merge PR when Issue is Ready for Production
 
 on:
-  push:
-  # issues:
-  #   types:
-  #     - labeled
+  issues:
+    types:
+      - labeled
 
 permissions:
   contents: write
@@ -16,7 +15,7 @@ env:
 
 jobs:
   merge-associated-pr:
-    # if: github.event.label.name == 'in progress'
+    if: github.event.label.name == 'in progress'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +27,13 @@ jobs:
           item_id: PVTI_lAHOAC2He84A3YmWzgZpwAQ
           status_field_name: 'Status'
           target_status: 'In Progress'
+  on-issue-qa-approved:
+    if: github.event.label.name == 'qa approved'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh issue edit ${{ github.event.issue.number }} --remove-label "ready for qa"
+      - run: gh issue edit ${{ github.event.issue.number }} --add-label "non regression passed"
       # - name: Find PR that references the issue
       #   id: find_pr
       #   run: |
