@@ -27,6 +27,7 @@ jobs:
           item_id: PVTI_lAHOAC2He84A3YmWzgZpwAQ
           status_field_name: 'Status'
           target_status: 'In Progress'
+
   on-issue-qa-approved:
     if: github.event.label.name == 'qa approved'
     runs-on: ubuntu-latest
