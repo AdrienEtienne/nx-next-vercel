@@ -2,23 +2,26 @@
 set -e
 
 echo "🔍 Recherche des champs du projet..."
-FIELDS=$(gh api graphql -f query='
-  {
-    node(id: "PVT_kwHOAC2He84A3YmW") {
-        ... on ProjectV2 {
-            fields(first: 20) {
-                nodes {
-                    ... on ProjectV2SingleSelectField {
-                        options {
+FIELDS=$(gh api graphql -f query="
+    {
+        node(id: \"$PROJECT_ID\") {
+            ... on ProjectV2 {
+                fields(first: 20) {
+                    nodes {
+                        ... on ProjectV2SingleSelectField {
                             id
                             name
+                            options {
+                                id
+                                name
+                            }
                         }
                     }
                 }
             }
         }
-    }
-    }')
+    }")
+echo "✅ Champs trouvés: $(echo "$FIELDS" | jq -r '.data.node.fields.nodes[].name')"
 
 FIELD_ID=$(echo "$FIELDS" | jq -r \
   --arg FIELD_NAME "$FIELD_NAME" '
@@ -26,6 +29,11 @@ FIELD_ID=$(echo "$FIELDS" | jq -r \
     | select(.name == $FIELD_NAME)
     | .id
 ')
+if [ -z "$FIELD_ID" ]; then
+  echo "❌ Champ introuvable"
+  exit 1
+fi
+echo "✅ FIELD_ID = $FIELD_ID"
 
 OPTION_ID=$(echo "$FIELDS" | jq -r \
   --arg FIELD_NAME "$FIELD_NAME" \
@@ -37,12 +45,11 @@ OPTION_ID=$(echo "$FIELDS" | jq -r \
     | .id
 ')
 
-if [ -z "$FIELD_ID" ] || [ -z "$OPTION_ID" ]; then
-  echo "❌ Champ ou option introuvable"
+if [ -z "$OPTION_ID" ]; then
+  echo "❌ Option introuvable"
   exit 1
 fi
 
-echo "✅ FIELD_ID = $FIELD_ID"
 echo "✅ OPTION_ID = $OPTION_ID"
 
 echo "➡️ Mise à jour de l’item..."
@@ -62,4 +69,4 @@ gh api graphql -f query="
     }
   }"
 
-echo "success=true" >> $GITHUB_OUTPUT
+# echo "success=true" >> $GITHUB_OUTPUT
