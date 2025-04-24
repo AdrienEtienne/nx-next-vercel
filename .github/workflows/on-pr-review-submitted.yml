@@ -24,6 +24,7 @@ jobs:
           pr_title: ${{ github.event.pull_request.title }}
       - name: Update issue labels
         run: |
+          gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "review approved"
           gh issue edit ${{ steps.extract.outputs.issue_number }} --remove-label "ready for review"
           gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ready for qa"
 
