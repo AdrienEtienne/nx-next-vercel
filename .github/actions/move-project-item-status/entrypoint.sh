@@ -2,25 +2,23 @@
 set -e
 
 echo "🔍 Recherche des champs du projet..."
-FIELDS=$(gh api graphql -f query="
-  query {
-    node(id: \"$PROJECT_ID\") {
-      ... on ProjectV2 {
-        fields(first: 20) {
-          nodes {
-            id
-            name
-            ... on ProjectV2SingleSelectField {
-              options {
-                id
-                name
-              }
+FIELDS=$(gh api graphql -f query='
+  {
+    node(id: "PVT_kwHOAC2He84A3YmW") {
+        ... on ProjectV2 {
+            fields(first: 20) {
+                nodes {
+                    ... on ProjectV2SingleSelectField {
+                        options {
+                            id
+                            name
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }")
+    }')
 
 FIELD_ID=$(echo "$FIELDS" | jq -r \
   --arg FIELD_NAME "$FIELD_NAME" '
