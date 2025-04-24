@@ -1,10 +1,9 @@
 name: Simulate Production Deploy and Comment on Issue
 
 on:
-  workflow_dispatch:
-#   push:
-#     branches:
-#       - main
+  push:
+    branches:
+      - main
 
 permissions:
   issues: write
@@ -47,3 +46,5 @@ jobs:
         run: |
           gh issue comment ${{ steps.extract.outputs.issue_number }} \
             --body "✅ This has been deployed to production."
+          gh issue edit ${{ github.event.issue.number }} --remove-label "ready for production"
+          gh issue edit ${{ github.event.issue.number }} --add-label "in production"
