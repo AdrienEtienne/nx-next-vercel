@@ -20,33 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Move issue in project
-        uses: octokit/graphql-action@v2.x
+      - name: Déplacer l’item vers In Progress
+        uses: ./.github/actions/move-project-item-status
         with:
-          query: |
-            mutation($projectId: ID!, $issueId: ID!, $fieldId: ID!) {
-              updateProjectV2ItemFieldValue(
-                input: {
-                  projectId: $projectId,
-                  itemId: $issueId,
-                  fieldId: $fieldId,
-                  value: { singleSelectOptionId: "47fc9ee4" }
-                }
-              ) {
-                projectV2Item {
-                  id
-                }
-              }
-            }
-          variables: |
-            {
-              "projectId": "PVT_kwHOAC2He84A3YmW",
-              "issueId": "PVTI_lAHOAC2He84A3YmWzgZpwAQ",
-              "fieldId": "PVTSSF_lAHOAC2He84A3YmWzgsh-Mo"
-            }
-        env:
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.PAT_2 }}
+          token: ${{ secrets.PAT }}
+          project_id: 'PVT_kwHOAC2He84A3YmW' # ID réel du projet
+          item_id: PVTI_lAHOAC2He84A3YmWzgZpwAQ
+          status_field_name: 'Status'
+          target_status: 'In Progress'
       # - name: Find PR that references the issue
       #   id: find_pr
       #   run: |
