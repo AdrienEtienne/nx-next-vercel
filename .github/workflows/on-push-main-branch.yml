@@ -47,3 +47,5 @@ jobs:
         run: |
           gh issue comment ${{ steps.extract.outputs.issue_number }} \
             --body "✅ This has been deployed to production."
+          gh issue edit ${{ github.event.issue.number }} --remove-label "ready for production"
+          gh issue edit ${{ github.event.issue.number }} --add-label "in production"
