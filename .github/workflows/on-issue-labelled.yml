@@ -55,6 +55,7 @@ jobs:
           fi
           echo "Found PR #: $PRS"
           echo "pr_number=$PRS" >> $GITHUB_OUTPUT
+
       - name: Merge the associated PR
         run: |
           gh issue comment ${{ github.event.issue.number }} --body "This issue is ready for production. On your mark, get set, go! 🚀"
