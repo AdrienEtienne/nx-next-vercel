@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+echo $GH_TOKEN | gh auth login --with-token
+
 echo "🔍 Recherche des champs du projet..."
 FIELDS=$(gh api graphql -f query="
     {
@@ -69,4 +71,4 @@ gh api graphql -f query="
     }
   }"
 
-# echo "success=true" >> $GITHUB_OUTPUT
+echo "success=true" >> $GITHUB_OUTPUT
