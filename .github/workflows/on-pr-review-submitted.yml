@@ -24,8 +24,8 @@ jobs:
           pr_title: ${{ github.event.pull_request.title }}
       - name: Update issue labels
         run: |
+          gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "review approved"
           gh issue edit ${{ steps.extract.outputs.issue_number }} --remove-label "ready for review"
-          gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ready for qa"
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,3 +46,4 @@ jobs:
           pr_title: ${{ github.event.pull_request.title }}
       - run: echo "Deploying to staging environment..."
       - run: gh issue comment ${{ steps.extract.outputs.issue_number }} --body "This issue is ready for QA. The environment is deployed."
+      - run: gh issue edit ${{ steps.extract.outputs.issue_number }} --add-label "ready for qa"
